@@ -201,12 +201,7 @@ public class MainActivity extends AppCompatActivity {
                         int len=log.size();// how many images are selected
 
                         ArrayList<Integer> list1= new ArrayList<Integer>();
-
-                        list1.add(null);
-                        list1.add(null);
-
-
-
+                        ArrayList<Integer> list2= new ArrayList<Integer>();
 
                        /*
                          first layout
@@ -264,9 +259,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-                                    list1.set(0,1);
-                                    list1.set(1,position1);
+                                    list1.clear();
+                                    list1.add(0,1);
+                                    list1.add(1,position1);
 
                                     if(log.containsKey(key1))
                                         log.put(key1,list1);
@@ -307,13 +302,13 @@ public class MainActivity extends AppCompatActivity {
                                                 .into(layout2image3);
 
 
+                                        list2.clear();
 
 
-
-                                        list1.set(0,2);
-                                        list1.set(1,position2);
+                                        list2.add(0,2);
+                                        list2.add(1,position2);
                                         if(log.containsKey(key2))
-                                            log.put(key2,list1);
+                                            log.put(key2,list2);
                                     }
                                     else if(map.size()==2)
                                     {
@@ -417,9 +412,9 @@ public class MainActivity extends AppCompatActivity {
                                 if(map.size()==2 && data1!=null)
                                 {
 
-
-                                    list1.set(0,1);
-                                    list1.set(1,position1);
+                                    list1.clear();
+                                    list1.add(0,1);
+                                    list1.add(1,position1);
                                     log.put(key1,list1);
 
                                     Glide.with(context)
@@ -441,10 +436,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 else if(map.size()==3 && data2!=null)
                                 {
-
-                                    list1.set(0,2);
-                                    list1.set(1,position2);
-                                    log.put(key2,list1);
+                                    list2.clear();
+                                    list2.add(0,2);
+                                    list2.add(1,position2);
+                                    log.put(key2,list2);
                                     Glide.with(context)
                                             .load(data2.getImageurl())
                                             .into(layout1image2);
@@ -511,11 +506,10 @@ public class MainActivity extends AppCompatActivity {
                         {
 
 
+                            list1.clear();
 
-
-                            list1.set(0,1);
-                            list1.set(1,position);
-
+                            list1.add(0,1);
+                            list1.add(1,position);
                             Glide.with(context)
                                     .load(data.getImageurl())
                                     .into(layout1image1);
@@ -537,6 +531,7 @@ public class MainActivity extends AppCompatActivity {
                              */
 
 
+
                             layout2image1.setLayoutParams(param);
 
                             Glide.with(context)
@@ -553,10 +548,9 @@ public class MainActivity extends AppCompatActivity {
                         else if(len==1)
                         {
                             System.out.println("hey 2 is called");
-
-
-                            list1.set(0,2);
-                            list1.set(1,position);
+                            list2.clear();
+                            list2.add(0,2);
+                            list2.add(1,position);
 
                             LinearLayout.LayoutParams param = Getweightzero();
                             layout1image2.setLayoutParams(param);
@@ -565,7 +559,7 @@ public class MainActivity extends AppCompatActivity {
                                     .load(data.getImageurl())
                                     .into(layout1image2);
 
-                            log.put(data.getImageid(),list1);
+                            log.put(data.getImageid(),list2);
 
 
                             /*
@@ -589,11 +583,13 @@ public class MainActivity extends AppCompatActivity {
                         else if(len==2)
                         {
                             System.out.println("hey 3 is called");
-                            list1.set(0,3);
-                            list1.set(1,position);
+                            list1.clear();
+                            list1.add(0,3);
+                            list1.add(1,position);
 
                             LinearLayout.LayoutParams param = Getweightone();
                             layout1image2.setLayoutParams(param);
+
                             Glide.with(context)
                                     .load(data.getImageurl())
                                     .into(layout1image3);
