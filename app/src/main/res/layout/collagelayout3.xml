@@ -1,45 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/collagelayout2"
     android:layout_width="160dp"
-    android:layout_height="200dp"
-    android:orientation="vertical"
-    android:layout_weight="1"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="1"
+    android:id="@+id/collagelayout3"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
     <LinearLayout
-        android:id="@+id/collage2"
+        android:id="@+id/collage3"
         android:layout_weight="0.5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="1"
-        android:orientation="horizontal">
-
+        >
         <ImageView
-            android:id="@+id/layout2image1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:scaleType="centerCrop"
-            android:src="@drawable/defualt" />
-
-
-        <ImageView
-            android:id="@+id/layout2image2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:scaleType="centerCrop"
-            android:src="@drawable/defualt" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_weight="0.5"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/layout2image3"
+            android:id="@+id/layout3image1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -48,5 +22,30 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_weight="0.5"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/layout3image2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:scaleType="centerCrop"
+            android:src="@drawable/defualt" />
+
+
+        <ImageView
+            android:id="@+id/layout3image3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:scaleType="centerCrop"
+            android:src="@drawable/defualt" />
+
+    </LinearLayout>
 
 </LinearLayout>

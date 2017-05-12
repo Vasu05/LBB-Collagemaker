@@ -8,7 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
+
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +28,7 @@ import android.view.View;
 
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,6 +42,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.Bitmap;
 import  android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 
@@ -53,11 +58,22 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     ContentResolver contentResolver;
     Context context = MainActivity.this;
+
     ImageView layout1image1,layout1image2,layout1image3;
     ImageView layout2image1,layout2image2,layout2image3;
-    static ImageView image;
-    LinearLayout layout1;
+    ImageView layout3image1,layout3image2,layout3image3;
+    ImageView layout4image1,layout4image2,layout4image3;
+
+
+    static ImageView image,image2;
+    LinearLayout layout1,collage1,collage2,collage3,collage4;
+    LinearLayout layout2, layout3,layout4;
+
+    CardView cardview;
     HashMap<String,List<Integer>> log= new HashMap<String,List<Integer>>();
+
+    TextView ImagePreview ;
+    static int flag=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /*
+
           Defining layouts
+
          */
         layout1image1 = (ImageView)findViewById(R.id.layout1image1);
         layout1image2 = (ImageView)findViewById(R.id.layout1image2);
@@ -76,12 +94,41 @@ public class MainActivity extends AppCompatActivity {
         layout2image2 = (ImageView)findViewById(R.id.layout2image2);
         layout2image3 = (ImageView)findViewById(R.id.layout2image3);
 
+        layout3image1 = (ImageView)findViewById(R.id.layout3image1);
+        layout3image2 = (ImageView)findViewById(R.id.layout3image2);
+        layout3image3 = (ImageView)findViewById(R.id.layout3image3);
+
+        layout4image1 = (ImageView)findViewById(R.id.layout4image1);
+        layout4image2 = (ImageView)findViewById(R.id.layout4image2);
+        layout4image3 = (ImageView)findViewById(R.id.layout4image3);
+
+
         image = (ImageView)findViewById(R.id.image);
+        image2 = (ImageView)findViewById(R.id.image2);
+
+        cardview = (CardView) findViewById(R.id.one);
+
+        ImagePreview = (TextView)findViewById(R.id.preview);
 
         layout1 = (LinearLayout)findViewById(R.id.collagelayout1);
+        layout2 = (LinearLayout)findViewById(R.id.collagelayout2);
+        layout3 = (LinearLayout)findViewById(R.id.collagelayout3);
+        layout4 = (LinearLayout)findViewById(R.id.collagelayout4);
+
+        layout1.setVisibility(View.GONE);
+        layout2.setVisibility(View.GONE);
+        layout3.setVisibility(View.GONE);
+        layout4.setVisibility(View.GONE);
+
+        collage1 = (LinearLayout)findViewById(R.id.collage1);
+        collage2 = (LinearLayout)findViewById(R.id.collage2);
+        collage3 = (LinearLayout)findViewById(R.id.collage3);
+        collage4 = (LinearLayout)findViewById(R.id.collage4);
 
         /*
+
           Recyclerview
+
          */
 
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
@@ -103,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
 
-                getpermission();
+                Androidpermission();
 
 
         }else {
@@ -113,7 +160,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /*
-           adapting gallery images in view
+
+           Adapting gallery images in view
 
          */
         RecyclerviewListener();
@@ -127,10 +175,51 @@ public class MainActivity extends AppCompatActivity {
           layout clicked
          */
 
-        layout1.setOnClickListener(new View.OnClickListener() {
+
+        ImagePreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveFrameLayout(layout1);
+                if(log.size()>=1 && flag==0) {
+                    image.setVisibility(View.VISIBLE);
+
+                    if(log.size()==1) {
+                        Bitmap bitmap = saveFrameLayout(layout1);
+                        image.setImageBitmap(bitmap);
+                    }
+                    else if(log.size()==2)
+                    {
+                        Bitmap bitmap = saveFrameLayout(layout1);
+                        Bitmap bitmap2 = saveFrameLayout(layout1);
+                        Bitmap scaled1 = getResizedBitmap(bitmap,500,750);
+                        Bitmap scaled2 = getResizedBitmap(bitmap2,700,500);
+                        image.setImageBitmap(scaled1);
+                        image2.setImageBitmap(scaled2);
+                    }
+                    else
+                    {
+                        Bitmap bitmap = saveFrameLayout(layout1);
+                        Bitmap scaled1 = getResizedBitmap(bitmap,500,750);
+                        image.setImageBitmap(scaled1);
+
+                    }
+
+                     flag=1;
+
+
+                    if(log.size()==2)
+                    {
+                        image2.setVisibility(View.VISIBLE);
+                      //  saveFrameLayout(layout1);
+                    }
+
+
+                }
+                else {
+                    image2.setVisibility(View.VISIBLE);
+                    image.setVisibility(View.GONE);
+                    flag=0;
+
+                }
             }
         });
 
@@ -283,7 +372,19 @@ public class MainActivity extends AppCompatActivity {
 
                                     layout2image1.setLayoutParams(param1);
 
+                                     /*
 
+                                        Third Collage layout
+
+                                      */
+                                     layout3image2.setLayoutParams(param1);
+
+                                    /*
+                                      Fourth Collage layout
+
+                                     */
+
+                                     layout4image1.setLayoutParams(param1);
 
 
                                     if(data2!=null && map.size()>2)
@@ -302,9 +403,31 @@ public class MainActivity extends AppCompatActivity {
                                                 .into(layout2image3);
 
 
+                                        /*
+                                          third collage
+                                         */
+                                        Glide.with(context)
+                                                .load(data1.getImageurl())
+                                                .into(layout3image1);
+
+                                        Glide.with(context)
+                                                .load(data2.getImageurl())
+                                                .into(layout3image2);
+
+                                        /*
+                                          F
+                                         */
+                                        Glide.with(context)
+                                                .load(data1.getImageurl())
+                                                .into(layout4image1);
+
+                                        Glide.with(context)
+                                                .load(data2.getImageurl())
+                                                .into(layout4image3);
+
+
+
                                         list2.clear();
-
-
                                         list2.add(0,2);
                                         list2.add(1,position2);
                                         if(log.containsKey(key2))
@@ -312,6 +435,18 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     else if(map.size()==2)
                                     {
+
+                                        layout2.setVisibility(View.GONE);
+                                        layout3.setVisibility(View.GONE);
+                                        layout4.setVisibility(View.GONE);
+
+                                        collage1.setLayoutParams(param1);
+                                        collage2.setLayoutParams(param1);
+                                        collage3.setLayoutParams(param1);
+                                        collage4.setLayoutParams(param1);
+
+
+
                                         Glide.with(context)
                                                 .load(data1.getImageurl())
                                                 .into(layout1image2);
@@ -320,9 +455,28 @@ public class MainActivity extends AppCompatActivity {
                                         Glide.with(context)
                                                 .load(data1.getImageurl())
                                                 .into(layout2image1);
+
                                         Glide.with(context)
                                                 .load(data1.getImageurl())
                                                 .into(layout2image3);
+
+
+                                        Glide.with(context)
+                                                .load(data1.getImageurl())
+                                                .into(layout3image1);
+
+                                        Glide.with(context)
+                                                .load(data1.getImageurl())
+                                                .into(layout4image1);
+
+
+                                        Glide.with(context)
+                                                .load(data1.getImageurl())
+                                                .into(layout4image1);
+
+
+
+
                                     }
                                     else
                                     {
@@ -336,12 +490,23 @@ public class MainActivity extends AppCompatActivity {
                                                 .load(R.drawable.defualt)
                                                 .into(layout1image1);
 
+                                        Glide.with(context)
+                                                .load(R.drawable.defualt)
+                                                .into(layout3image1);
+
+                                        Glide.with(context)
+                                                .load(R.drawable.defualt)
+                                                .into(layout3image2);
+
+
+
 
                                     }
                                 }
                                 else {
 
 
+                                    layout1.setVisibility(View.GONE);
                                     Glide.with(context)
                                             .load(R.drawable.defualt)
                                             .into(layout1image1);
@@ -360,6 +525,13 @@ public class MainActivity extends AppCompatActivity {
                                     Glide.with(context)
                                             .load(R.drawable.defualt)
                                             .into(layout2image3);
+
+                                    Glide.with(context)
+                                            .load(R.drawable.defualt)
+                                            .into(layout3image1);
+                                    Glide.with(context)
+                                            .load(R.drawable.defualt)
+                                            .into(layout3image2);
                                 }
 
 
@@ -400,6 +572,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                                 LinearLayout.LayoutParams param1 = Getweightzero();
+
                                 layout1image2.setLayoutParams(param1);
 
                                 /*
@@ -407,15 +580,37 @@ public class MainActivity extends AppCompatActivity {
                                    Second layout
 
                                  */
+
                                 layout2image1.setLayoutParams(param1);
+
+                                /*
+                                  Third layout
+
+                                 */
+
+                                layout3image2.setLayoutParams(param1);
+
+                                /*
+                                  Fourth
+                                 */
+                                layout4image1.setLayoutParams(param1);
 
                                 if(map.size()==2 && data1!=null)
                                 {
-
                                     list1.clear();
                                     list1.add(0,1);
                                     list1.add(1,position1);
                                     log.put(key1,list1);
+
+                                    layout2.setVisibility(View.GONE);
+                                    layout3.setVisibility(View.GONE);
+                                    layout4.setVisibility(View.GONE);
+
+                                    collage1.setLayoutParams(param1);
+                                    collage2.setLayoutParams(param1);
+                                    collage3.setLayoutParams(param1);
+                                    collage4.setLayoutParams(param1);
+
 
                                     Glide.with(context)
                                             .load(data1.getImageurl())
@@ -428,10 +623,24 @@ public class MainActivity extends AppCompatActivity {
                                     Glide.with(context)
                                             .load(data1.getImageurl())
                                             .into(layout2image3);
+
                                     Glide.with(context)
                                             .load(data1.getImageurl())
                                             .into(layout2image1);
 
+                                    /*
+                                      Third Collage
+                                     */
+                                    Glide.with(context)
+                                            .load(data1.getImageurl())
+                                            .into(layout3image2);
+
+                                    /*
+                                      Fourth
+                                     */
+                                    Glide.with(context)
+                                            .load(data1.getImageurl())
+                                            .into(layout4image1);
 
                                 }
                                 else if(map.size()==3 && data2!=null)
@@ -440,6 +649,7 @@ public class MainActivity extends AppCompatActivity {
                                     list2.add(0,2);
                                     list2.add(1,position2);
                                     log.put(key2,list2);
+
                                     Glide.with(context)
                                             .load(data2.getImageurl())
                                             .into(layout1image2);
@@ -451,6 +661,26 @@ public class MainActivity extends AppCompatActivity {
                                     Glide.with(context)
                                             .load(data2.getImageurl())
                                             .into(layout2image1);
+
+                                    /*
+                                    Third layout
+                                     */
+
+                                    Glide.with(context)
+                                            .load(data2.getImageurl())
+                                            .into(layout3image2);
+                                    /*
+                                      Fourth layout
+                                     */
+
+                                    Glide.with(context)
+                                            .load(data2.getImageurl())
+                                            .into(layout4image1);
+
+                                    Glide.with(context)
+                                            .load(data1.getImageurl())
+                                            .into(layout4image1);
+
 
                                 }
 
@@ -479,6 +709,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                                 layout2image1.setLayoutParams(param1);
+                                layout3image2.setLayoutParams(param1);
+                                layout4image1.setLayoutParams(param1);
 
                                 if(log.size()>2)
                                 {
@@ -487,18 +719,24 @@ public class MainActivity extends AppCompatActivity {
                                             .into(layout2image1);
                                 }
 
-                                data2 = datalist.get(1);
+                                Model data3 = datalist.get(1);
+
+                                Glide.with(context)
+                                        .load(data3.getImageurl())
+                                        .into(layout2image3);
 
                                 Glide.with(context)
                                         .load(data2.getImageurl())
-                                        .into(layout2image3);
+                                        .into(layout4image3);
 
 
                                 log.remove(data.getImageid());
                             }
                         }
+
                         /*
-                            Adding Images to layout
+
+                         ************************    Adding Images to layout
 
                          */
 
@@ -516,9 +754,23 @@ public class MainActivity extends AppCompatActivity {
                             log.put(data.getImageid(),list1);
 
 
+
                             //First time click on image set both images same;
                             LinearLayout.LayoutParams param = Getweightzero();
                             layout1image2.setLayoutParams(param);
+
+
+                            //new thing added
+
+                            layout1.setVisibility(View.VISIBLE);
+                            layout2.setVisibility(View.GONE);
+                            layout3.setVisibility(View.GONE);
+                            layout4.setVisibility(View.GONE);
+
+                            collage1.setLayoutParams(param);
+                            collage2.setLayoutParams(param);
+                            collage3.setLayoutParams(param);
+                            collage4.setLayoutParams(param);
 
                             Glide.with(context)
                                     .load(data.getImageurl())
@@ -542,24 +794,63 @@ public class MainActivity extends AppCompatActivity {
                                     .load(data.getImageurl())
                                     .into(layout2image3);
 
+                            /*
+
+                              Third layout Images Adding
+
+                             */
+                            layout3image2.setLayoutParams(param);
+
+                            Glide.with(context)
+                                    .load(data.getImageurl())
+                                    .into(layout3image1);
+
+                            Glide.with(context)
+                                    .load(data.getImageurl())
+                                    .into(layout3image2);
+
+
+                            /*
+                              Fourth Collage
+                             */
+                            Glide.with(context)
+                                    .load(data.getImageurl())
+                                    .into(layout4image1);
+                            Glide.with(context)
+                                    .load(data.getImageurl())
+                                    .into(layout4image3);
 
                         }
 
                         else if(len==1)
                         {
                             System.out.println("hey 2 is called");
-                            list2.clear();
-                            list2.add(0,2);
-                            list2.add(1,position);
+                            list1.clear();
+                            list1.add(0,2);
+                            list1.add(1,position);
 
                             LinearLayout.LayoutParams param = Getweightzero();
+                            LinearLayout.LayoutParams param1 = Getweightone();
+
                             layout1image2.setLayoutParams(param);
+
+                            //change
+                            layout3.setVisibility(View.VISIBLE);
+                            layout2.setVisibility(View.VISIBLE);
+                            layout4.setVisibility(View.VISIBLE);
+
+                            collage1.setLayoutParams(param1);
+                            collage2.setLayoutParams(param1);
+                            collage3.setLayoutParams(param1);
+                            collage4.setLayoutParams(param1);
+
+
 
                             Glide.with(context)
                                     .load(data.getImageurl())
                                     .into(layout1image2);
 
-                            log.put(data.getImageid(),list2);
+                            log.put(data.getImageid(),list1);
 
 
                             /*
@@ -576,6 +867,25 @@ public class MainActivity extends AppCompatActivity {
                                     .load(data.getImageurl())
                                     .into(layout2image1);
 
+                            /*
+                               Third Collage
+
+                             */
+
+                            layout3image2.setLayoutParams(param);
+                            Glide.with(context)
+                                    .load(data.getImageurl())
+                                    .into(layout3image2);
+
+                            /*
+                              Fouth Collage
+                             */
+
+                            layout4image1.setLayoutParams(param);
+
+                            Glide.with(context)
+                                    .load(data.getImageurl())
+                                    .into(layout4image1);
 
 
                         }
@@ -627,7 +937,46 @@ public class MainActivity extends AppCompatActivity {
                                         .into(layout2image1);
 
 
+                            /*
+
+                               Third Collage
+
+                             */
+//                            layout1.setVisibility(View.VISIBLE);
+//                            layout2.setVisibility(View.VISIBLE);
+//                            layout3.setVisibility(View.VISIBLE);
+//                            layout4.setVisibility(View.VISIBLE);
+
+                            layout3image2.setLayoutParams(param2);
+
+                            Glide.with(context)
+                                    .load(data.getImageurl())
+                                    .into(layout3image3);
+
+                            /*
+
+                              Fourth Collage
+
+                             */
+
+                            layout4image1.setLayoutParams(param2);
+
+                            if(data3!=null)
+                                Glide.with(context)
+                                        .load(data3.getImageurl())
+                                        .into(layout4image1);
+                            if(data2!=null)
+                                Glide.with(context)
+                                        .load(data2.getImageurl())
+                                        .into(layout4image2);
+
+                            Glide.with(context)
+                                    .load(data.getImageurl())
+                                    .into(layout4image3);
+
                             log.put(data.getImageid(),list1);
+
+
 
                         }
                         else if(len>2)
@@ -652,10 +1001,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    public void saveFrameLayout(LinearLayout linearLayout) {
-
-
+    public Bitmap saveFrameLayout(LinearLayout linearLayout) {
 
         /*
           canvas
@@ -663,6 +1009,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bitmap bitmap = Bitmap.createBitmap(linearLayout.getWidth(), linearLayout.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
+
         Drawable bgDrawable = linearLayout.getBackground();
         if (bgDrawable != null) {
             bgDrawable.draw(canvas);
@@ -670,12 +1017,47 @@ public class MainActivity extends AppCompatActivity {
 
         }
         linearLayout.draw(canvas);
+//        Bitmap scaled =null;
+//        if(log.size()==2) {
+//            scaled = getResizedBitmap(bitmap, 500, 750);
+//
+//
+//            //scaled2 =getResizedBitmap(bitmap, 750, 500);
+//        }
+//        else if(log.size()==3)
+//        {
+//            scaled = getResizedBitmap(bitmap, 750, 750);
+//        }
+//        else
+//            scaled = bitmap;
 
-        image.setImageBitmap(bitmap);
+
+       return bitmap;
+       // image.setImageBitmap(scaled);
+
 
 
     }
 
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+
+
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
+    }
 
 
     public List<Model> getdata()
@@ -740,9 +1122,7 @@ public class MainActivity extends AppCompatActivity {
         return  param;
     }
 
-
-
-    public void getpermission()
+    public void Androidpermission()
     {
         if ((ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
